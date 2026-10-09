@@ -13,7 +13,7 @@
 #ifdef __unix__
 #include <dlfcn.h>
 #include <pthread.h>
-#elif __WIN32
+#elif _WIN32
 #include <windows.h>
 #endif
 
@@ -21,9 +21,9 @@
 #ifdef __unix__
 typedef pthread_mutex_t lisp_mutex_t;
 #define LISP_MUTEX_INITIALIZER PTHREAD_MUTEX_INITIALIZER
-#elif __WIN32
-typedef LPCRITICAL_SECTION lisp_mutex_t;
-#define LISP_MUTEX_INITIALIZER NULL /*@todo handle this on Windows*/
+#elif defined(_WIN32)
+typedef CRITICAL_SECTION lisp_mutex_t;
+#define LISP_MUTEX_INITIALIZER {0}
 #endif
 
 lisp_mutex_t* lisp_mutex_create(void);
@@ -41,7 +41,7 @@ typedef void* dl_handle_t;
 #define DL_ERROR()           lisp_mod_dlerror()
 
 const char *lisp_mod_dlerror(void);
-#elif __WIN32
+#elif _WIN32
 typedef HMODULE dl_handle_t;
 
 #define DL_OPEN(NAME)        LoadLibrary((NAME))

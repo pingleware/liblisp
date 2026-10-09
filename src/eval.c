@@ -32,7 +32,7 @@ static lisp_cell_t *mk(lisp_t * l, lisp_type type, size_t count, ...) {
 	node = lisp_calloc(l, sizeof(*node));
 	ret->type = type;
 	for (i = 0; i < count; i++)
-		if (FLOAT == type)
+		if (LISP_FLOAT == type)
 			ret->p[i].f = va_arg(ap, double);
 		else if (SUBR == type)
 			ret->p[i].prim = va_arg(ap, lisp_subr_func);
@@ -93,7 +93,7 @@ int is_int(lisp_cell_t * x) {
 
 int is_floating(lisp_cell_t * x) {
 	assert(x);
-	return x->type == FLOAT;
+	return x->type == LISP_FLOAT;
 }
 
 int is_io(lisp_cell_t * x) {
@@ -113,7 +113,7 @@ int is_proper_cons(lisp_cell_t * x) {
 
 int is_proc(lisp_cell_t * x) {
 	assert(x);
-	return x->type == PROC;
+	return x->type == LISP_PROC;
 }
 
 int is_fproc(lisp_cell_t * x) {
@@ -226,7 +226,7 @@ lisp_cell_t *mk_subr(lisp_t * l, lisp_subr_func p, const char *fmt, const char *
 
 lisp_cell_t *mk_proc(lisp_t * l, lisp_cell_t * args, lisp_cell_t * code, lisp_cell_t * env, lisp_cell_t * doc) {
 	assert(l && args && code && env);
-	return mk(l, PROC, 5, args, code, env, NULL, doc);
+	return mk(l, LISP_PROC, 5, args, code, env, NULL, doc);
 }
 
 lisp_cell_t *mk_fproc(lisp_t * l, lisp_cell_t * args, lisp_cell_t * code, lisp_cell_t * env, lisp_cell_t * doc) {
@@ -236,7 +236,7 @@ lisp_cell_t *mk_fproc(lisp_t * l, lisp_cell_t * args, lisp_cell_t * code, lisp_c
 
 lisp_cell_t *mk_float(lisp_t * l, lisp_float_t f) {
 	assert(l);
-	return mk(l, FLOAT, 1, f);
+	return mk(l, LISP_FLOAT, 1, f);
 }
 
 /**@todo fix for binary data, also make version that automatically does the string dup*/
@@ -421,9 +421,9 @@ lisp_cell_t *lisp_copy(lisp_t *l, lisp_cell_t *src) {
 			lisp_out_of_memory(l);
 		return mk_hash(l, new);
 	}
-	case FLOAT:
+	case LISP_FLOAT:
 		return mk_float(l, get_float(src));
-	case PROC:
+	case LISP_PROC:
 	case FPROC:
 		return mk(l, src->type, 5,
 				lisp_copy(l, get_proc_args(src)),
@@ -548,9 +548,9 @@ lisp_cell_t *eval(lisp_t * l, unsigned depth, lisp_cell_t * exp, lisp_cell_t * e
 	switch (exp->type) {
 	case INTEGER:
 	case SUBR:
-	case PROC:
+	case LISP_PROC:
 	case STRING:
-	case FLOAT:
+	case LISP_FLOAT:
 	case IO:
 	case HASH:
 	case FPROC:

@@ -26,16 +26,18 @@ extern "C" {
 #include <stdio.h>
 
 #ifdef _WIN32
-/** @brief The LIBLISP_API macro is needed due to the way Windows handles
- * DLLs, the build system should define COMPILING_LIBLISP when
- * building "liblisp.dll", but only then. **/
+    #ifdef LIBLISP_STATIC
+        /* Static library: no import/export */
+        #define LIBLISP_API
+    #else
         #ifdef COMPILING_LIBLISP
-                #define LIBLISP_API __declspec(dllexport) /**< export function*/
+            #define LIBLISP_API __declspec(dllexport)
         #else
-                #define LIBLISP_API __declspec(dllimport) /**< import function*/
+            #define LIBLISP_API __declspec(dllimport)
         #endif
+    #endif
 #else
-        #define LIBLISP_API /**< not needed*/
+    #define LIBLISP_API
 #endif
 
 /************************* structs, opaque types, enums ***********************/
@@ -101,6 +103,8 @@ typedef struct {
 /* This module mostly has string manipulation functions to make processing
  * them a little more comfortable in C. The interpreter uses them internally
  * but they is little reason to hide them. */
+
+LIBLISP_API lisp_t *lisp_create(void);
 
 /**@brief print out a neatly formatted error message to stderr then exit(-1).
  * @param msg  message to print out

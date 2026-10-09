@@ -19,6 +19,14 @@
 #include <errno.h>
 #include <time.h>
 
+#ifdef __unix__
+#include <dlfcn.h>
+#include <pthread.h>
+#elif __WIN32
+#include <windows.h>
+#endif
+
+
 /* X-Macro of primitive functions and their names; basic built in subr
  * The format is:
  *       primitive subroutine
@@ -114,15 +122,18 @@ static const lisp_module_subroutines_t primitives[] = {
 	X("*seek-end*",     SEEK_END)	  X("*integer*",      INTEGER)\
 	X("*symbol*",       SYMBOL)       X("*cons*",         CONS)\
 	X("*string*",       STRING)       X("*hash*",         HASH)\
-	X("*io*",           IO)           X("*float*",        FLOAT)\
-       	X("*procedure*",    PROC)         X("*primitive*",    SUBR)\
+	X("*io*",           IO)           X("*float*",       LISP_FLOAT)\
+    X("*procedure*",   LISP_PROC)         X("*primitive*",    SUBR)\
 	X("*f-procedure*",  FPROC)        X("*file-in*",      IO_FIN)\
 	X("*file-out*",     IO_FOUT)      X("*string-in*",    IO_SIN)\
  	X("*string-out*",   IO_SOUT)      X("*user-defined*", USERDEF)\
-	X("*eof*",          EOF)          X("*sig-abrt*",     SIGABRT)\
+	X("*eof*",          EOF)  
+#ifndef _WIN32        
+	X("*sig-abrt*",     SIGABRT)\
 	X("*sig-fpe*",      SIGFPE)       X("*sig-ill*",      SIGILL)\
 	X("*sig-int*",      SIGINT)       X("*sig-segv*",     SIGSEGV)\
 	X("*sig-term*",     SIGTERM)
+#endif
 
 #define X(NAME, VAL) { NAME, VAL },
 /**@brief A list of all integer values to be made available to the
@@ -261,7 +272,7 @@ static lisp_cell_t *subr_binv(lisp_t * l, lisp_cell_t * args) {
 
 /** For numerical operations
  * @todo Floating point numbers should infect the operation:
- *       float + integer = float, integer + float = float
+ *      LISP_FLOAT + integer = float, integer + float = float
  * @todo Add in overloads for user defined types
  * @todo Take an arbitrary number of arguments */
 
@@ -751,7 +762,7 @@ lisp_cell_t *lisp_coerce(lisp_t * l, lisp_type type, lisp_cell_t *from) {
 		if (is_cons(from))	/*hash from list */
 			return subr_hash_create(l, from);
 		break;
-	case FLOAT:
+	case LISP_FLOAT:
 		if (is_int(from))	/*int to float */
 			return mk_float(l, get_int(from));
 		if (is_str(from)) {	/*string to float */

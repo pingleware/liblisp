@@ -27,8 +27,8 @@ static void gc_free(lisp_t * l, lisp_cell_t * x) {
 	switch (x->type) {
 	case INTEGER:
 	case CONS:
-	case FLOAT:
-	case PROC:
+	case LISP_FLOAT:
+	case LISP_PROC:
 	case SUBR:
 	case FPROC:
 		free(x);
@@ -74,13 +74,13 @@ void lisp_gc_mark(lisp_t * l, lisp_cell_t * op) {
 	case SYMBOL:
 	case STRING:
 	case IO:
-	case FLOAT:
+	case LISP_FLOAT:
 		break;
 	case SUBR:
 		lisp_gc_mark(l, get_func_docstring(op));
 		break;
 	case FPROC:
-	case PROC:
+	case LISP_PROC:
 		lisp_gc_mark(l, get_proc_args(op));
 		lisp_gc_mark(l, get_proc_code(op));
 		lisp_gc_mark(l, get_proc_env(op));

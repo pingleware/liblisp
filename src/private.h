@@ -47,19 +47,20 @@ extern "C" {
 		else (ENV)->recover_init = 0;\
 	} while(0)
 
+
 typedef enum {
 	INVALID, /**< invalid object (default), halts interpreter*/
 	SYMBOL,  /**< symbol */
 	INTEGER, /**< integer, a normal fixed with number*/
 	CONS,    /**< cons cell*/
-	PROC,    /**< lambda procedure*/
+	LISP_PROC,    /**< lambda procedure*/
 	SUBR,    /**< subroutine or primitive written in C*/
 	STRING,  /**< a NUL terminated string, @todo strings should operate on UTF-8, or binary data */
 	IO,      /**< Input/Output port*/
 	HASH,    /**< Associative hash table*/
 	FPROC,   /**< F-Expression*/
 /*	MACRO,   // Macro */
-	FLOAT,   /**< Floating point number; could be float or double*/
+	LISP_FLOAT,   /**< Floating point number; could be float or double*/
 	USERDEF  /**< User defined types*/
 	/**@todo CLOSURE, MACRO (replaces FPROC), VECTORs (array of same type, strings really
 	 * should be a vector of chars). */

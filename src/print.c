@@ -206,7 +206,7 @@ int printer(lisp_t *l, io_t *o, lisp_cell_t *op, unsigned depth) {
 	case INTEGER:
 		lisp_printf(l, o, depth, "%m%d", get_int(op));
 		break;
-	case FLOAT:
+	case LISP_FLOAT:
 		lisp_printf(l, o, depth, "%m%f", get_float(op));
 		break;
 	case CONS:
@@ -249,7 +249,7 @@ int printer(lisp_t *l, io_t *o, lisp_cell_t *op, unsigned depth) {
 	case SUBR:
 		lisp_printf(l, o, depth, "%B<subroutine:%d>", get_int(op));
 		break;
-	case PROC: case FPROC:
+	case LISP_PROC: case FPROC:
 		lisp_printf(l, o, depth+1,
 			is_proc(op) ? "(%ylambda%t %S %S " :
 				      "(%yflambda%t %S %S ",
