@@ -115,24 +115,27 @@ static const lisp_module_subroutines_t primitives[] = {
         {NULL, NULL, NULL, NULL} /*must be terminated with NULLs*/
 };
 #undef X
-
 /**< X-Macros of all built in integers*/
 #define INTEGER_XLIST\
 	X("*seek-cur*",     SEEK_CUR)     X("*seek-set*",    SEEK_SET)\
-	X("*seek-end*",     SEEK_END)	  X("*integer*",      INTEGER)\
+	X("*seek-end*",     SEEK_END)     X("*integer*",      INTEGER)\
 	X("*symbol*",       SYMBOL)       X("*cons*",         CONS)\
 	X("*string*",       STRING)       X("*hash*",         HASH)\
-	X("*io*",           IO)           X("*float*",       LISP_FLOAT)\
-    X("*procedure*",   LISP_PROC)         X("*primitive*",    SUBR)\
+	X("*io*",           IO)           X("*float*",        LISP_FLOAT)\
+	X("*procedure*",    LISP_PROC)    X("*primitive*",    SUBR)\
 	X("*f-procedure*",  FPROC)        X("*file-in*",      IO_FIN)\
 	X("*file-out*",     IO_FOUT)      X("*string-in*",    IO_SIN)\
- 	X("*string-out*",   IO_SOUT)      X("*user-defined*", USERDEF)\
-	X("*eof*",          EOF)  
-#ifndef _WIN32        
+	X("*string-out*",   IO_SOUT)      X("*user-defined*", USERDEF)\
+	X("*eof*",          EOF)
+
+#ifndef _WIN32
+#define SIGNAL_XLIST\
 	X("*sig-abrt*",     SIGABRT)\
 	X("*sig-fpe*",      SIGFPE)       X("*sig-ill*",      SIGILL)\
 	X("*sig-int*",      SIGINT)       X("*sig-segv*",     SIGSEGV)\
 	X("*sig-term*",     SIGTERM)
+#else
+#define SIGNAL_XLIST
 #endif
 
 #define X(NAME, VAL) { NAME, VAL },
@@ -140,9 +143,39 @@ static const lisp_module_subroutines_t primitives[] = {
  *        interpreter as lisp objects */
 static const struct integer_list { char *name; intptr_t val; } integers[] = {
         INTEGER_XLIST
+        SIGNAL_XLIST
         {NULL, 0}
 };
 #undef X
+
+
+/**< X-Macros of all built in integers*/
+//#define INTEGER_XLIST\
+//	X("*seek-cur*",     SEEK_CUR)     X("*seek-set*",    SEEK_SET)\
+//	X("*seek-end*",     SEEK_END)	  X("*integer*",      INTEGER)\
+//	X("*symbol*",       SYMBOL)       X("*cons*",         CONS)\
+//	X("*string*",       STRING)       X("*hash*",         HASH)\
+//	X("*io*",           IO)           X("*float*",       LISP_FLOAT)\
+//    X("*procedure*",   LISP_PROC)         X("*primitive*",    SUBR)\
+//	X("*f-procedure*",  FPROC)        X("*file-in*",      IO_FIN)\
+//	X("*file-out*",     IO_FOUT)      X("*string-in*",    IO_SIN)\
+// 	X("*string-out*",   IO_SOUT)      X("*user-defined*", USERDEF)\
+//	X("*eof*",          EOF)  
+//#ifndef _WIN32        
+//	X("*sig-abrt*",     SIGABRT)\
+//	X("*sig-fpe*",      SIGFPE)       X("*sig-ill*",      SIGILL)\
+//	X("*sig-int*",      SIGINT)       X("*sig-segv*",     SIGSEGV)\
+//	X("*sig-term*",     SIGTERM)
+//#endif
+//
+//#define X(NAME, VAL) { NAME, VAL },
+///**@brief A list of all integer values to be made available to the
+// *        interpreter as lisp objects */
+//static const struct integer_list { char *name; intptr_t val; } integers[] = {
+//        INTEGER_XLIST
+//        {NULL, 0}
+//};
+//#undef X
 
 #define X(CNAME, LNAME) static lisp_cell_t _ ## CNAME = { SYMBOL, 0, 1, 0, 0, .p[0].v = LNAME};
 CELL_XLIST /*structs for special cells*/
